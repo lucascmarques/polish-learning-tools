@@ -1,7 +1,7 @@
 import random
 from pathlib import Path
 
-INPUT_PATH = Path("files/RandomInput.txt")
+INPUT_PATH = Path("files/random_input.txt")
 OUTPUT_PATH = Path("files/RandomOutput.txt")
 
 
