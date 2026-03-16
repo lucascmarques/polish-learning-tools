@@ -6,14 +6,15 @@ import spacy
 
 FILES_PATH = Path("subtitles/")
 KNOWN_WORDS_PATH = Path("files/known_words.txt")
+OUTPUT_PATH = Path("files/subtitles_popular_words.txt")
 
 
-def find_popular_words():
+def find_popular_words(files) -> Counter:
     print("Finding popular words...")
     counts = Counter()
     words_regex = re.compile(r"\p{L}+")
-    nlp = spacy.load("pl_core_news_md")
-    for file in FILES_PATH.iterdir():
+    nlp = spacy.load("pl_core_news_lg")
+    for file in files:
         for line in file.open("r"):
             words = words_regex.findall(line)
             words_lower_case = [w.lower() for w in words]
@@ -27,13 +28,14 @@ def remove_known(words: Counter):
     for word in known_words:
         words.pop(word, None)
 
-def save_to_file():
+def save_file(words: Counter, file_path: Path):
+    lines = [f"{word}: {count}" for word, count in words.most_common()]
+    file_path.write_text("\n".join(lines), encoding="utf-8")
     print("Saving popular words...")
 
 if __name__ == "__main__":
-    words = find_popular_words()
+    words = find_popular_words(FILES_PATH.iterdir())
     remove_known(words)
+    save_file(words, OUTPUT_PATH)
     print("Total words: ", len(set(words)))
-    count_of_counts = Counter(words.values())
-    print(count_of_counts)
     print(words)
